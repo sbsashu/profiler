@@ -2,16 +2,27 @@ let mongoose = require('mongoose');
 
 let Schema = mongoose.Schema;
 
-let User = new Schema({
-    name: {
-        type: String
+let userSchema = new Schema({
+    username: {
+        type: String,
+        required: true
     },
-    lastname: {
+    last_name: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    avatar: {
         type: String
     }
-})
+}, {timestamps: true})
 
-let newUser = mongoose.model('users', User)
-module.exports = {
-    newUser
-}
+module.exports = User = mongoose.model('users', userSchema);
