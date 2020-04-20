@@ -1,7 +1,5 @@
-require('dotenv').config();
-
+require('dotenv').config(); 
 let mongoose = require('mongoose');
-
 mongoose.Promise = global.Promise;
 
 let options = {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false}

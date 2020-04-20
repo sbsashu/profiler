@@ -8,7 +8,7 @@
     "server": "nodemon server.js",
     "client": "npm start --prefix profiler_client",
     "devApp": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix profiler_client && npm run build --prefix profiler_client"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm install --prefix profiler_client && npm run build --prefix profiler_client"
   },
   "repository": {
     "type": "git",
