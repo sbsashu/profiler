@@ -1,0 +1,6 @@
+{
+    "DB_URL": "mongodb://sbsashu:Ashutosh#_12@ds145304.mlab.com:45304/sbsashu",
+    "JWT": "this is my secret",
+    "GITHUBCLIENT": "Iv1.c592d993f3c10ffb",
+    "GITHUBSECRET": "27c71412b692b725949df13aecdad68135bf4d32"
+}

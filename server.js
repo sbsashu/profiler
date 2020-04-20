@@ -1,5 +1,6 @@
 'use strict';
 let colors = require('colors');
+let path = require('path');
 colors.enable();
 colors.setTheme({
     silly: 'rainbow',
@@ -22,8 +23,13 @@ let express = require('express')
 let {APP} = require('./route_api')
 let app = express();
 /** call routes api */
-
-let port = conf.PORT || 3000;
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static('profiler_client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'profiler_client', 'build', 'index.html'));
+  })
+}
+let port = process.env.PORT || 3000;
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(morgan('dev'));
