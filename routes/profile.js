@@ -14,7 +14,7 @@ module.exports = {
         if(!profile) {
             return res.status(400).send({
                 success: false,
-                message: "There is no user with this user id"
+                message: "Profile is not created yet"
             })
         }
 
@@ -42,8 +42,12 @@ module.exports = {
 
         let errors = validationResult(req);
 
-        if(!errors.isEmpty()) {return res.status(400).send({errors: errors.array()})
+        if(!errors.isEmpty()) {
+            return res.status(400).send({
+                errors:  errors.array()
+            })
         }
+
         let profileDetail = {};
         if(req.user.id) profileDetail.user = req.user.id;
         if(company) profileDetail.company = company;
@@ -133,12 +137,12 @@ module.exports = {
     },
     GetUserById: async (req, res) => {
         let id = req.params.user_id;
-
+        console.log('aaaa', id)
         if(!id) return res.status(400).send({errors: [{error: 'Fields is missing'}]});
 
         
         try {
-            let profile = await Profile.findById({_id: id}).populate({path: 'user', select: 'username last_name avatar -_id'});
+            let profile = await Profile.findOne({user: id}).populate({path: 'user', select: 'username last_name avatar _id'});
 
             if(!profile) return res.status(400).send({error: [{error: 'User not found'}]});
             return res.status(200).send({
@@ -161,7 +165,7 @@ module.exports = {
         try {
             if(!req.user.id) return res.status(400).send({error: [{error: 'User not found'}]})
 
-            await Profile.findByIdAndRemove({_id: req.user.id});
+            await Profile.deleteMany({user: req.user.id});
             await User.findByIdAndRemove({_id:  req.user.id})
             return res.status(200).send({
                 success: true,
@@ -217,10 +221,14 @@ module.exports = {
         }
     },
     DeleteExperience: async (req, res) => {
+        let id = req.params.exp_id;
+        if(!id)
+            return res.status(400).send({success: false, message: 'Id is missing'})
         try {
             let profile = await Profile.findOne({user: req.user.id});
-
-            profile.experience.shift();
+            let removeIndex = profile.experience.map(item => item.id)
+                                    .indexOf(id);
+            profile.experience.splice(removeIndex, 1);
             await profile.save();
             return res.status(200).send({
                 success: true,
@@ -237,7 +245,7 @@ module.exports = {
         let {
             school,
             degree,
-            location,
+            fieldofstudy,
             from,
             to,
             current,
@@ -247,7 +255,7 @@ module.exports = {
         let newEdu = {
             school,
             degree,
-            location,
+            fieldofstudy,
             from,
             to,
             current,
@@ -268,9 +276,15 @@ module.exports = {
         })
     },
     DeleteEducation: async (req, res) => {
+        let id = req.params.edu_id;
+        if(!id)
+            return res.status(400).send({success: false, message: 'Id is missing'})
         try {
             let profile = await Profile.findOne({user: req.user.id});
-            profile.education.shift();
+            let removeIndex = profile.education.map(item => item.id)
+                                                .indexOf(id);
+            
+            profile.education.splice(removeIndex, 1);
             await profile.save();
             return res.status(200).send({
                 success: true,
@@ -294,14 +308,12 @@ module.exports = {
             }
             request(option, (err, response, body) => {
                 if(err) return res.status(400).send({success: false, message: 'Something went wrong'});
-                console.log(response)
                 if(response.statusCode !== 200) {
                     return res.status(404).send({
                         success: false,
                         message: 'No git repo found'
                     })
                 }
-                console.log(body, response)
                 res.status(200).send(JSON.parse(body));
             })
         } catch (error) {

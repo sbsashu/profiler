@@ -1,10 +1,10 @@
-import React, { Fragment,  useState } from 'react';
+import React, { Fragment,  useState, useEffect } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { CreateProfileUpdate } from '../../actions/profile';
+import { CreateProfileUpdate, GetProfile } from '../../actions/profile';
 import { withRouter, Link } from 'react-router-dom';
 
-const CreateProfile = ({CreateProfileUpdate, history}) => {
+const EditProfile = ({CreateProfileUpdate, history, GetProfile, profile: {profile, loading}}) => {
     let [formData, setFormData] = useState({
         company: '',
         location: '',
@@ -22,6 +22,25 @@ const CreateProfile = ({CreateProfileUpdate, history}) => {
     })
 
     let [toggleInput, setToggleInput] = useState(false)
+    useEffect(() => {
+        GetProfile();
+
+        setFormData({
+            company: loading || !profile.data.company ? '' : profile.data.company,
+            website: loading || !profile.data.website ? '' : profile.data.website,
+            location: loading || !profile.data.location ? '' : profile.data.location,
+            status: loading || !profile.data.status ? '' : profile.data.status,
+            skills: loading || !profile.data.skills ? '' : profile.data.skills.join(','),
+            githubusername: loading || !profile.data.githubusername ? '' : profile.data.githubusername,
+            bio: loading || !profile.data.bio ? '' : profile.data.bio,
+            twitter: loading || !profile.data.social ? '' : profile.data.social.twitter,
+            facebook: loading || !profile.data.social ? '' : profile.data.social.facebook,
+            linkedin: loading || !profile.data.social ? '' : profile.data.social.linkedin,
+            instagram: loading || !profile.data.social ? '' : profile.data.social.instagram,
+            youtube: loading || !profile.data.social ? '' : profile.data.social.youtube
+        })
+    }, [loading, GetProfile]);
+    
     let {
         company,
         location,
@@ -39,13 +58,13 @@ const CreateProfile = ({CreateProfileUpdate, history}) => {
     const onChange = e => setFormData({...formData, [e.target.name]: e.target.value});
     const onSubmit = e => {
         e.preventDefault();
-        CreateProfileUpdate(formData, history);
-
+        CreateProfileUpdate(formData, history, true);
     }
+
     return (
         <Fragment>
       <h1 className="large text-primary">
-        Create Your Profile
+        Update Your Profile
       </h1>
       <p className="lead">
         <i className="fas fa-user"></i> Let's get some information to make your
@@ -152,13 +171,15 @@ const CreateProfile = ({CreateProfileUpdate, history}) => {
     )
 }
 
-CreateProfile.propTypes = {
-    CreateProfileUpdate: PropTypes.func.isRequired
+EditProfile.propTypes = {
+    CreateProfileUpdate: PropTypes.func.isRequired,
+    profile: PropTypes.object.isRequired,
+    GetProfile: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => (
  {
-
+    profile: state.profile
  } 
 )
-export default connect(mapStateToProps, {CreateProfileUpdate})(withRouter(CreateProfile));
+export default connect(mapStateToProps, {CreateProfileUpdate, GetProfile})(withRouter(EditProfile));

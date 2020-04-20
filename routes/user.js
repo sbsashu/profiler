@@ -88,7 +88,7 @@ module.exports = {
     },
     getUser: async (req, res) => {
         if(req.user.id) {
-            let userDetail = await User.findById(req.user.id).select('-password -_id -__v')
+            let userDetail = await User.findById(req.user.id).select('-password -__v')
             userDetail ? 
                 res.status(200).send(userDetail) : res.status(404).send({message: 'User not found'});
         } else {

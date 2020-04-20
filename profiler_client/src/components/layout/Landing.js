@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const Landing = ({ isAuthenticated }) => {
-  console.log('auth', isAuthenticated)
     if(isAuthenticated) {
       return <Redirect to='/dashboard'/>;
     }

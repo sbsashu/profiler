@@ -67,7 +67,7 @@ let Profile = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            location: {
+            fieldofstudy: {
                 type: String
             },
             from: {

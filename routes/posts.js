@@ -135,7 +135,7 @@ module.exports = {
             if(post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
                 return res.status(403).send({
                     success: false,
-                    message: 'Post has been not liked yet'
+                    message: 'Please like first'
                 })
             }
 
@@ -180,7 +180,7 @@ module.exports = {
                         message: 'Post not found'
                     });
             let newComment = {
-                user: res.user.id,
+                user: req.user.id,
                 text: req.body.text,
                 name: user.username,
                 avatar: user.avatar
@@ -211,13 +211,13 @@ module.exports = {
         }
     },
     DeleteComment: async (req, res) => {
-        if(req.params.id === undefined || req.params.comment_id === undefined) return res.status(401).send(
+        if(req.params.post_id === undefined || req.params.comment_id === undefined) return res.status(401).send(
             {
                 success: false,
                 message: 'Bad Request'
             });
             try {
-                let post = await Post.findById(req.params.id);
+                let post = await Post.findById(req.params.post_id);
                 let comments = post.comments.find(comment => comment.id === req.params.comment_id);
                 if(!comments) return res.status(404).send(
                     {
@@ -233,7 +233,7 @@ module.exports = {
                 )
                  let removeIndex = post.comments.map(comments => comments.user.toString()).indexOf(req.user.id);
 
-                 post.splice(removeIndex, 1);
+                 post.comments.splice(removeIndex, 1);
                  await post.save();
 
                  return res.status(200).send(

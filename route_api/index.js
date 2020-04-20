@@ -5,7 +5,8 @@ let {
     DeletePostById,
     Likes,
     Un_likes,
-    Comments
+    Comments,
+    DeleteComment
 } = require('../routes/posts')
 let { authApi } = require('../routes/auth')
 let { 
@@ -32,7 +33,7 @@ module.exports = {
                     ],
                     CreatePost);
         app.get('/api/get/posts', [Authenticate], GetAllPost);
-        app.get('/api/get/byid/:user_id', [Authenticate], GetPostById);
+        app.get('/api/post/:user_id', [Authenticate], GetPostById);
         app.delete('/api/delete/post/:id', [Authenticate], DeletePostById);
         app.get('/auth', authApi);
         app.get('/user', userApi);
@@ -47,9 +48,10 @@ module.exports = {
 
         app.put('/api/like/:id', [Authenticate], Likes);
         app.put('/api/unlike/:id', [Authenticate], Un_likes);
-        app.put('/api/comment/:id', [Authenticate, 
+        app.post('/api/comment/:id', [Authenticate, 
             check('text', 'Text is required').not().isEmpty()
-        ], Comments)
+        ], Comments);
+        app.delete('/api/delete/comment/:comment_id/:post_id', [Authenticate], DeleteComment)
         app.post('/auth/login', [
             check('email', 'Email is required').isEmail(),
             check('password', 'Password is required').not().isEmpty(),
@@ -64,7 +66,7 @@ module.exports = {
         
         app.get('/api/get_all_profile', GetAllProfile);
         app.get('/api/profile/:user_id', GetUserById);
-        app.post('/api/profile/delete', [Authenticate], DeleteUser);
+        app.delete('/api/profile/delete', [Authenticate], DeleteUser);
         app.get('/api/me', [Authenticate], GetUser);
         
         app.put('/api/add/experience', [Authenticate], [
@@ -72,14 +74,14 @@ module.exports = {
             check('company', 'Company is required').not().isEmpty()
         ], AddExperience);
 
-        app.delete('/api/delete/experience', [Authenticate], DeleteExperience);
+        app.delete('/api/delete/experience/:exp_id', [Authenticate], DeleteExperience);
 
         app.put('/api/add/education', [Authenticate], [
             check('school', 'School is required').not().isEmpty(),
             check('degree', 'Degree is required').not().isEmpty()
         ], AddEducation);
 
-        app.delete('/api/delete/education', [Authenticate], DeleteEducation);
+        app.delete('/api/delete/education/:edu_id', [Authenticate], DeleteEducation);
         app.get('/github/:username', GitHubProfile);
     }
 }
